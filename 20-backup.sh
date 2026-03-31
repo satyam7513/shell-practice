@@ -49,18 +49,18 @@ then
    USAGE
 fi
 
-# if [ ! -d $SOURCE_DIR ]
-# then
-#   echo -e "$R Source Direcotry $SOURCE_DIR does not exist. please check $N"
-#   exit 1
-# fi
+if [ ! -d $SOURCE_DIR ]
+then
+  echo -e "$R Source Direcotry $SOURCE_DIR does not exist. please check $N"
+  exit 1
+fi
 
-# if [ ! -d $DEST_DIR ]
-# then
-#   echo -e "$R Destintion  Direcotry $DEST_DIR does not exist. please check $N"
-#   exit 1
-# fi
+if [ ! -d $DEST_DIR ]
+then
+  echo -e "$R Destintion  Direcotry $DEST_DIR does not exist. please check $N"
+  exit 1
+fi
 
-# FILES=$(find $SOURCE_DIR -name "*.log" -mtime +$DAYS)
+#FILES=$(find $SOURCE_DIR -name "*.log" -mtime +$DAYS)
 
 
