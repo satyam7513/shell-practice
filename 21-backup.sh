@@ -24,6 +24,7 @@ VALIDATE(){
     fi
 }
 
+check_root(){
     if [ $USERID -ne 0 ]
     then
         echo -e "$R ERROR:: Please run this script with root access $N"
@@ -31,14 +32,17 @@ VALIDATE(){
     else
         echo "You are running with root access" 
     fi
+}
+
+check_root
 
 mkdir -p $LOGS_FOLDER
+
 
 USAGE(){
     echo -e "$R USAGE:: $N sh 21-backup.sh <source-dir> <destination-dir> <days(optional)>"
     exit 1
 }
-
 
 if [ $# -lt 2 ]
 then
@@ -47,44 +51,41 @@ fi
 
 if [ ! -d $SOURCE_DIR ]
 then
-    echo -e "$R Source Directory $SOURCE_DIR does not exist. Please check $N"
-    exit 1
+  echo -e "$R Source Direcotry $SOURCE_DIR does not exist. please check $N"
+  exit 1
 fi
 
 if [ ! -d $DEST_DIR ]
 then
-    echo -e "$R Destination Directory $DEST_DIR does not exist. Please check $N"
-    exit 1
+  echo -e "$R Destintion  Direcotry $DEST_DIR does not exist. please check $N"
+  exit 1
 fi
 
 FILES=$(find $SOURCE_DIR -name "*.log" -mtime +$DAYS)
 
-if [ ! -z $FILES ]
+if [ ! -z "$FILES" ]
 then
-   echo "files to zip are: $FILES"
+   echo "Files to zip are: $FILES"
    TIMESTAMP=$(date +%F-%H-%M-%S)
    ZIP_FILE="$DEST_DIR/app-logs-$TIMESTAMP.zip"
    find $SOURCE_DIR -name "*.log" -mtime +$DAYS | zip -@ "$ZIP_FILE"
-   
+
    if [ -f $ZIP_FILE ]
    then
       echo -e "succesfully created zip file"
 
-        while IFS= read -r filepath
+       while IFS= read -r filepath
         do
             echo "Deleting file: $filepath" | tee -a $LOG_FILE
             rm -rf $filepath
         done <<< $FILES
         echo -e "Log files older than $DAYS from source directory removed ... $G SUCCESS $N"
-
     else
        echo -e "zip file creation.. .$R failure $N"
        exit 1
     fi
-
 else
-   echo "No files found older then 14days ...$Y skipping $N"
-
+echo  "No files found older than 14 days ... $Y skipping $N"
 fi
 
 
