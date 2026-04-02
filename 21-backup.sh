@@ -3,7 +3,7 @@
 USERID=$(id -u)
 SOURCE_DIR=$1
 DEST_DIR=$2
-DAYS=${3:-14}
+DAYS=${3:-14} # if DAYS are provided that will be considered, otherwise default 14 days
 
 LOGS_FOLDER="/var/log/shellscript-logs"
 SCRIPT_NAME=$(echo $0 | cut -d "." -f1)
@@ -35,9 +35,7 @@ check_root(){
 }
 
 check_root
-
 mkdir -p $LOGS_FOLDER
-
 
 USAGE(){
     echo -e "$R USAGE:: $N sh 21-backup.sh <source-dir> <destination-dir> <days(optional)>"
@@ -46,46 +44,44 @@ USAGE(){
 
 if [ $# -lt 2 ]
 then
-   USAGE
+    USAGE
 fi
 
 if [ ! -d $SOURCE_DIR ]
 then
-  echo -e "$R Source Direcotry $SOURCE_DIR does not exist. please check $N"
-  exit 1
+    echo -e "$R Source Directory $SOURCE_DIR does not exist. Please check $N"
+    exit 1
 fi
 
 if [ ! -d $DEST_DIR ]
 then
-  echo -e "$R Destintion  Direcotry $DEST_DIR does not exist. please check $N"
-  exit 1
+    echo -e "$R Destination Directory $DEST_DIR does not exist. Please check $N"
+    exit 1
 fi
 
 FILES=$(find $SOURCE_DIR -name "*.log" -mtime +$DAYS)
 
 if [ ! -z "$FILES" ]
 then
-   echo "Files to zip are: $FILES"
-   TIMESTAMP=$(date +%F-%H-%M-%S)
-   ZIP_FILE="$DEST_DIR/app-logs-$TIMESTAMP.zip"
-   find $SOURCE_DIR -name "*.log" -mtime +$DAYS | zip -@ "$ZIP_FILE"
+    echo "Files to zip are: $FILES"
+    TIMESTAMP=$(date +%F-%H-%M-%S)
+    ZIP_FILE="$DEST_DIR/app-logs-$TIMESTAMP.zip"
+    find $SOURCE_DIR -name "*.log" -mtime +$DAYS | zip -@ "$ZIP_FILE"
 
-   if [ -f $ZIP_FILE ]
-   then
-      echo -e "succesfully created zip file"
+    if [ -f $ZIP_FILE ]
+    then
+        echo -e "Successfully created Zip file"
 
-       while IFS= read -r filepath
+        while IFS= read -r filepath
         do
             echo "Deleting file: $filepath" | tee -a $LOG_FILE
             rm -rf $filepath
         done <<< $FILES
         echo -e "Log files older than $DAYS from source directory removed ... $G SUCCESS $N"
     else
-       echo -e "zip file creation.. .$R failure $N"
-       exit 1
+        echo -e "Zip file creation ... $R FAILURE $N"
+        exit 1
     fi
 else
-echo  "No files found older than 14 days ... $Y skipping $N"
+    echo -e "No log files found older than 14 days ... $Y SKIPPING $N"
 fi
-
-
