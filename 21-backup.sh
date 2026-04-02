@@ -35,7 +35,7 @@ VALIDATE(){
 mkdir -p $LOGS_FOLDER
 
 USAGE(){
-    echo -e "$R USAGE:: $N sh 20-backup.sh <source-dir> <destination-dir> <days(optional)>"
+    echo -e "$R USAGE:: $N sh 21-backup.sh <source-dir> <destination-dir> <days(optional)>"
     exit 1
 }
 
